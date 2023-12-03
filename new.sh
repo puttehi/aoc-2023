@@ -5,13 +5,13 @@ set -euo pipefail
 
 DAY_NO=$1
 
-git checkout -b "$DAY_NO"
+git checkout -b "day-$DAY_NO"
 mkdir -p "$DAY_NO"
 pushd "$DAY_NO"
     cat <<EOF > README.md
-# Problem #$DAY_NO -- 2023-12-$DAY_NO
+# Problem #$DAY_NO
 
-https://adventofcode.com/2023/day/1
+https://adventofcode.com/2023/day/$DAY_NO
 
 ## Problem statement
 
@@ -43,4 +43,4 @@ build:
 run:
     echo "run command"
 EOF
-popd "$1"
+popd
