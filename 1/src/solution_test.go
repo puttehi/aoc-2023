@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -71,23 +72,83 @@ func TestMakeDigitStrings(t *testing.T) {
 	}
 }
 
-func TestSolve(t *testing.T) {
+func TestMutateWordsToDigits(t *testing.T) {
 	var testInput = []string{
-		"1abc2",
-		"pqr3stu8vwx",
-		"a1b2c3d4e5f",
-		"treb7uchet",
+		"two1nine",
+		"eightwothree",
+		"abcone2threexyz",
+		"xtwone3four",
+		"4nineeightseven2",
+		"zoneight234",
+		"7pqrstsixteen",
 	}
 
-	expected := 12 + 38 + 15 + 77
-
-	solution, err := solve(testInput)
-
-	if err != nil {
-		t.Fatalf("returned error %s", err.Error())
+	var expected = []string{
+		"219",
+		"823",
+		"123",
+		"2134",
+		"49872",
+		"18234",
+		"76",
 	}
 
-	if solution != expected {
-		t.Errorf("got %d, want %d", solution, expected)
+	testInput = wordsToDigits(testInput)
+
+	for i, s := range testInput {
+		if s != expected[i] {
+			t.Errorf("got %s, want %s", s, expected[i])
+		}
+	}
+}
+
+func TestSolve(t *testing.T) {
+	var testCases = []struct {
+		name      string
+		input     []string
+		isPartTwo bool
+		want      int
+	}{
+		{
+			"Part one (no conversions)",
+			[]string{
+				"1abc2",
+				"pqr3stu8vwx",
+				"a1b2c3d4e5f",
+				"treb7uchet",
+			},
+			false,
+			12 + 38 + 15 + 77,
+		},
+		{
+			"Part two (words to digits)",
+			[]string{
+				"two1nine",
+				"eightwothree",
+				"abcone2threexyz",
+				"xtwone3four",
+				"4nineeightseven2",
+				"zoneight234",
+				"7pqrstsixteen",
+			},
+			true,
+			29 + 83 + 13 + 24 + 42 + 14 + 76,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			solution, err := solve(tc.input, tc.isPartTwo)
+
+			if err != nil {
+				t.Fatalf("returned error %s", err.Error())
+			}
+
+			if solution != tc.want {
+				t.Errorf("got %d, want %d", solution, tc.want)
+			}
+
+			fmt.Println(tc.input, solution)
+		})
 	}
 }

@@ -56,10 +56,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	solution, err := solve(inputLines)
+	solutionOne, err := solve(inputLines, false)
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Printf("Solution for part 1 is: %d (counted %d strings)\n", solutionOne, len(inputLines))
 
-	fmt.Printf("Solution is: %d", solution)
+	solutionTwo, err := solve(inputLines, true)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Solution for part 2 is: %d (counted %d strings)\n", solutionTwo, len(inputLines))
 }
