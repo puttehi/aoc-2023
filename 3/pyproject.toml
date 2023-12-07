@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "aoc-2023-day-2"
+version = "0.1.0"
+description = ""
+authors = ["puttehi <peteeez95@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+notebook = "^7.0.6"
+numpy = "^1.26.2"
+pandas = "^2.1.3"
+tabulate = "^0.9.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
