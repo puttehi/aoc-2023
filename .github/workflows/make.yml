@@ -33,24 +33,16 @@ jobs:
       run:
         shell: bash
         working-directory: ./${{ matrix.day-no }}
-    env:
-      # venv location
-      POETRY_HOME: /opt/poetry
     steps:
     - uses: actions/checkout@v3
     # https://python-poetry.org/docs/#ci-recommendations
     - name: Install Poetry
       run: |
-        python3 -m venv $POETRY_HOME
-        source $POETRY_HOME/venv/bin/activate
         pip install poetry==1.2.0
         poetry --version
-        deactivate
     # There are no tests for notebooks, let's try to boot it up just because we can
     # Should exit with != 0 if it fails
     - name: Run and quit day ${{ matrix.day-no }}
       run: |
-        source $POETRY_HOME/venv/bin/activate
         make run && exit 0
-        deactivate
 
