@@ -1,0 +1,36 @@
+name: Advent of Code 2023 Makefile CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  make-go-days:
+    strategy:
+      matrix:
+        day-no: [1, 4]
+    runs-on: ubuntu-latest
+    container: go:1.18
+    steps:
+    - uses: actions/checkout@v3
+    - name: Test and build ${{ matrix.day-no }}
+      run: |
+        cd ${{ matrix.day-no }}
+        make build
+  make-notebook-days:
+    strategy:
+      matrix:
+        day-no: [2, 3]
+    runs-on: ubuntu-latest
+    container: python:3.10
+    steps:
+    - uses: actions/checkout@v3
+    # There is no tests for notebooks, let's try to boot it up just because we can
+    # Should exit with != 0 if it fails
+    - name: Run and quit ${{ matrix.day-no }}
+      run: |
+        cd ${{ matrix.day-no }}
+        make run && exit 0
+
