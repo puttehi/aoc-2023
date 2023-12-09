@@ -14,11 +14,13 @@ jobs:
         day-no: [1, 4]
     runs-on: ubuntu-latest
     container: go:1.18
+    defaults:
+      run:
+        working-directory: ./${{ matrix.day-no }}
     steps:
     - uses: actions/checkout@v3
     - name: Test and build day ${{ matrix.day-no }}
       run: |
-        cd ${{ matrix.day-no }}
         make build
 
   make-notebook-days:
@@ -27,6 +29,10 @@ jobs:
         day-no: [2, 3]
     runs-on: ubuntu-latest
     container: python:3.10
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./${{ matrix.day-no }}
     env:
       # venv location
       POETRY_HOME: /opt/poetry
@@ -44,7 +50,6 @@ jobs:
     # Should exit with != 0 if it fails
     - name: Run and quit day ${{ matrix.day-no }}
       run: |
-        cd ${{ matrix.day-no }}
         source $POETRY_HOME/venv/bin/activate
         make run && exit 0
         deactivate
