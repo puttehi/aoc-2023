@@ -39,25 +39,25 @@ func main() {
 	testInputter := StringLister{
 		multiLineString: testInput,
 	}
-	testSolution, err := solve(testInputter)
+	testSolution, testSolutionTwo, err := solve(testInputter)
 
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("Test input:\n%+v\n\nSolution:\n%d\n", testInputter.GetCards(), testSolution)
+	fmt.Printf("Test input:\n%+v\n\nSolution:\n%d\nSolution 2:\n%d\n", testInputter.GetCards(), testSolution, testSolutionTwo)
 
 	inputter, err := newStringListerFromFile("./input.txt")
 	if err != nil {
 		panic(err)
 	}
 
-	solution, err := solve(inputter)
+	solution, solutionTwo, err := solve(inputter)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("Real solution:\n%d\n", solution)
+	fmt.Printf("Real solution:\n%d\nPart two:\n%d\n", solution, solutionTwo)
 
 	os.Exit(0)
 }

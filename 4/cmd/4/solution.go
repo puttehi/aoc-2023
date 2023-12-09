@@ -17,12 +17,12 @@ type Solution = int
 func getWinningNumbers(card string) ([]int, error) {
 	parts := strings.Split(card, "|")
 	if len(parts) != 2 {
-		return []int{}, fmt.Errorf("Card split to more than two parts: %d", len(parts))
+		return []int{}, fmt.Errorf("Card split to wrong amount of parts: %d, card: %s", len(parts), card)
 	}
 
 	leftParts := strings.Split(parts[0], ":")
 	if len(leftParts) != 2 {
-		return []int{}, fmt.Errorf("Left side of card split to more than two parts: %d", len(parts))
+		return []int{}, fmt.Errorf("Left side of card split to wrong amount of parts: %d, left side: %s", len(leftParts), parts[0])
 	}
 
 	leftNumbers := leftParts[1] // 0 is "Card ##:"
@@ -82,21 +82,73 @@ func intPow(n, m int) int {
 	return result
 }
 
-func solve(inputLister InputLister) (Solution, error) {
+// Recursive solution:
+// - Copy func input list (card list)
+// - Go through copy
+// - Builds list of copy cards in a list
+// - When done, recurse back with the new, current copy
+// In the end, copies of copies of copies of copies should be returned when popping stack
+// and it should be possible to len(copy of input)
+func recursive(allCards []string, input []string, previousIndex int) []string {
+	total := make([]string, len(input))
+	copy(total, input) // Always first 25 cards are included in total
+
+	for i, card := range input {
+		copies := []string{}
+		winning, err := getWinningNumbers(card)
+
+		// cardInfo := fmt.Sprintf("Original card at %d: %s\nwon: %d card copies\npreviousIndex: %d", i, card, len(winning), previousIndex)
+		// infoLen := len(cardInfo)
+		// fmt.Println(strings.Repeat("-", infoLen))
+		// fmt.Println(cardInfo)
+		// fmt.Println(strings.Repeat("\\/", int(infoLen/2)))
+
+		if err != nil {
+			fmt.Printf("Couldn't determine winning numbers for card %s at index %d: %s\n", card, i, err.Error())
+			return []string{}
+		}
+
+		winningCount := len(winning)
+		startIndex := previousIndex + 1
+		for j := startIndex; j < startIndex+winningCount; j++ {
+			// fmt.Println("ALL:\t\t", allCards)
+			// fmt.Printf("Copying winning card and recursing...\n  at %d:\t  %s\n", j+1, allCards[j+1])
+			// fmt.Println("From:\t", copies)
+			copies = append(copies, allCards[j+1]) // j needs to be in allcards index range
+			// fmt.Println("To:\t", copies)
+		}
+		// fmt.Printf("Oh no Pooh, you are eating recursion!:\nRecursing to:\t--> %s <<-\n", strings.Join(copies, ",\n\t\t    "))
+		total = append(total, recursive(allCards, copies, startIndex)...)
+		// fmt.Println(strings.Repeat("/\\", int(infoLen/2)))
+		// fmt.Println(strings.Repeat("-", infoLen))
+        previousIndex = startIndex
+	}
+
+	return total
+}
+
+func solve(inputLister InputLister) (Solution, Solution, error) {
 	input := inputLister.GetCards()
 
-	solution := 0
+	partOneSolution := 0
 
 	for _, card := range input {
 		winning, err := getWinningNumbers(card)
 		if err != nil {
-			return solution, err
+			return partOneSolution, -1, err
 		}
 
-		cardPts := 1 << len(winning) / 2
+		winningCount := len(winning)
+
+		cardPts := 1 << winningCount / 2
 		// fmt.Printf("Total card pts for %d cards: %d\n", len(winning), cardPts)
-		solution += cardPts
+		partOneSolution += cardPts
 	}
 
-	return solution, nil
+	partTwoCards := recursive(input, input, -1)
+	// fmt.Printf("Part two?\n%+v\n", strings.Join(partTwoCards, "\n"))
+	partTwoSolution := len(partTwoCards)
+	// fmt.Printf("Part two Solution: %d\n", partTwoSolution)
+
+	return partOneSolution, partTwoSolution, nil
 }
