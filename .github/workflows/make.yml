@@ -1,3 +1,4 @@
+---
 name: Advent of Code 2023 Makefile CI
 
 on:
@@ -15,22 +16,36 @@ jobs:
     container: go:1.18
     steps:
     - uses: actions/checkout@v3
-    - name: Test and build ${{ matrix.day-no }}
+    - name: Test and build day ${{ matrix.day-no }}
       run: |
         cd ${{ matrix.day-no }}
         make build
+
   make-notebook-days:
     strategy:
       matrix:
         day-no: [2, 3]
     runs-on: ubuntu-latest
     container: python:3.10
+    env:
+      # venv location
+      POETRY_HOME: /opt/poetry
     steps:
     - uses: actions/checkout@v3
-    # There is no tests for notebooks, let's try to boot it up just because we can
+    # https://python-poetry.org/docs/#ci-recommendations
+    - name: Install Poetry
+      run: |
+        python3 -m venv $POETRY_HOME
+        source $POETRY_HOME/venv/bin/activate
+        pip install poetry==1.2.0
+        poetry --version
+        deactivate
+    # There are no tests for notebooks, let's try to boot it up just because we can
     # Should exit with != 0 if it fails
-    - name: Run and quit ${{ matrix.day-no }}
+    - name: Run and quit day ${{ matrix.day-no }}
       run: |
         cd ${{ matrix.day-no }}
+        source $POETRY_HOME/venv/bin/activate
         make run && exit 0
+        deactivate
 
