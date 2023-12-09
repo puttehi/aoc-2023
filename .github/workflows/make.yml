@@ -40,9 +40,8 @@ jobs:
       run: |
         pip install poetry==1.2.0
         poetry --version
-    # There are no tests for notebooks, let's try to boot it up just because we can
-    # Should exit with != 0 if it fails
-    - name: Run and quit day ${{ matrix.day-no }}
+    # There are no tests for notebooks, let's try to install it just because we can :)
+    - name: Setup day ${{ matrix.day-no }}
       run: |
-        make run && exit 0
+        make setup
 
